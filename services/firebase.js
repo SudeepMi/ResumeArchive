@@ -1,6 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getFirestore, doc, setDoc, getDocs, collection } from "firebase/firestore";
+
 
 import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -20,9 +22,26 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
+const db = getFirestore(app);
 
 export async function firebaseUpload(file, name) {
     const storageRef = ref(storage, name);
     const res = await uploadBytes(storageRef, file);
     return res;
+}
+
+export async function saveResume(data, key){
+  const data_ = await setDoc(doc(db, "resumes", key), data)
+  return true;
+}
+
+export async function getCvs(){
+  const data = [];
+  const querySnapshot = await getDocs(collection(db, "resumes"));
+   querySnapshot.forEach(doc=>doc.exists() && data.push(doc.data()))
+   return data;
+}
+
+export async function addViews(key){
+
 }

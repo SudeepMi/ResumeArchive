@@ -1,14 +1,15 @@
 "use client"
 import axios from 'axios';
-import { Poppins } from 'next/font/google';
-import Image from 'next/image';
 import React, { useState } from 'react';
 import { poppins } from '../Header/page';
+import { firebaseUpload, saveResume } from '@/services/firebase';
+import { useRouter } from 'next/navigation';
 
 const FileUpload = () => {
     const [dragging, setDragging] = useState(false);
     const [uploadedFile, setUploadedFile] = useState(null);
     const [file, setFile] = useState({});
+    const router = useRouter();
     const [result, setResult] = useState({
         education: [],
         experience: [],
@@ -41,7 +42,6 @@ const FileUpload = () => {
     const handleFileInputChange = (e) => {
         const file = e.target.files[0]; // Only handle the first file
         setFile(file);
-
         handleFile(file.name);
     };
 
@@ -64,14 +64,26 @@ const FileUpload = () => {
             setResult(res.data)
             setLoading(false);
             setUploadedFile(null)
-
+           
         }).catch(err => {
             console.log(err)
         })
     }
+    const handleSave = async ()  => {
+        const results = await firebaseUpload(file,result.name.replace(" ","-").toLowerCase()+"-"+file.name)
+        const  cvFile = "https://firebasestorage.googleapis.com/v0/b/"+results.metadata.bucket+"/o/"+results.metadata.fullPath+"?alt=media"
+        const data = {
+            key: result?.name.replace(" ","-").toLowerCase(),
+            values : {...result, file: cvFile}
+        }
+        const dbResponse = await saveResume(data.values, data.key);
+        console.log(dbResponse);
+        router.push("/success");
+    }
 
     return (
         <div className=' flex flex-col gap-1 items-center'>
+           
             {!uploadedFile && <p>Upload CV/Resume</p>}
             {!result.name && <div
                 className={`w-[100%] h-64 border-2 border-dashed border-gray-400 rounded-lg flex flex-col justify-center ${uploadedFile ? 'bg-orange-100' : ""}  ${dragging ? 'bg-gray-200' : ''}`}
@@ -126,18 +138,18 @@ const FileUpload = () => {
                 {
                     (uploadedFile && errors.length == 0) && <div> <button onClick={() => handleRemove()} className='bg-slate-800 text-white px-4 py-4 text-center rounded w-[100%] text-[20px] uppercase mt-5' disabled={loading}>Scan my CV</button><p className='py-2 cursor-pointer underline' onClick={() => { setFile(null), setUploadedFile(null) }}>Upload Again</p> {loading && <p className='text-sm'>Scaning....</p>}</div>
                 }
-                {console.log(result)}
+                
                 {
-                    <div className='grid grid-cols-1 gap-1'>
+                    <div className='grid grid-cols-1 gap-1 place-items-start'>
                         {result.name && <p>Name: <span>{result.name}</span></p>}
-                        {result.skills.length > 0 && <div className='grid gap-1'>
-                            <p>Skills</p>
+                        {result.skills.length > 0 && <div className='grid gap-1 place-items-start'>
+                            <p className='bold'>Skills</p>
                             <div className='flex gap-1 flex-wrap'>
                                 {result.skills.map(res => <span key={res} className='px-4 py-1 bg-black text-white mx-3 rounded text-sm'>{res}</span>)}
                             </div>
                         </div>}
-                        {result.education.length > 0 && <div className='grid gap-1'>
-                            <p>Education</p>
+                        {result.education.length > 0 && <div className='grid gap-1 place-items-start'>
+                            <p className='bold'>Education</p>
                             <div className='flex gap-1 flex-wrap'>
                                 {result.education.map((res, key) => {
                                     return <span key={key} className='px-4 py-1 bg-black text-white mx-3 rounded text-sm'>
@@ -148,8 +160,8 @@ const FileUpload = () => {
                                 })}
                             </div>
                         </div>}
-                        {result.experience.length > 0 && <div className='grid gap-1'>
-                            <p>Experience</p>
+                        {result.experience.length > 0 && <div className='grid gap-1 place-items-start'>
+                            <p className='bold'>Experience</p>
                             <div className='flex gap-1 flex-wrap'>
                                 {result.experience.map((res, key) => {
                                     return <div key={key}>
@@ -161,7 +173,7 @@ const FileUpload = () => {
                         </div>}
 
                         {(result.name) && <div>
-                            <button>Upload on ResumeArchive</button>
+                            <button className='px-4 py-2 text-center rounded w-[100%] border'  onClick={()=>handleSave()}>Upload on ResumeArchive</button>
                             <button onClick={() => { setUploadedFile(null), setLoading(false), setErrors([]) }} className='px-4 py-2 text-center rounded w-[100%] border'>Upload Again</button>
                         </div>
                         }

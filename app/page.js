@@ -3,7 +3,6 @@ import Header, { poppins } from "@/components/Header/page"
 export default function Home() {
   return (
     <main className="">
-      <Header />
       <div className="grid grid-cols-[3fr_2fr] p-24">
         <div className="p-10">
         {/* <h2 className={`${poppins.className} text-2xl font-bold tracking-wider`}>Resume<span className='text-orange-200'>Archive</span></h2> */}
