@@ -1,11 +1,11 @@
 import React from 'react'
 import List from '@/components/List/page'
 import { getCvs } from '@/services/firebase'
-const page = async () => {
-    const data = await getCvs();
+const page =  () => {
+   
   return (
     <div>
-        <List data={data} />
+        <List />
     </div>
   )
 }

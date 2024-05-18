@@ -1,6 +1,11 @@
 "use client";
-import React from 'react'
-const page = ({data}) => {
+import { getCvs } from '@/services/firebase';
+import React, { useEffect, useState } from 'react'
+const Page = () => {
+  const [data, setData] = useState([]);
+  useEffect(()=>{
+    getCvs().then(d=>setData(d));
+  },[])
 
   return (
     <div className="px-5 py-5">
@@ -50,4 +55,4 @@ const page = ({data}) => {
   )
 }
 
-export default page
+export default Page
