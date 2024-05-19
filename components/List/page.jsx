@@ -1,5 +1,6 @@
 "use client";
-import { getCvs } from '@/services/firebase';
+import { db, getCvs } from '@/services/firebase';
+import { collection, onSnapshot } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 const Page = () => {
   const [data, setData] = useState([]);

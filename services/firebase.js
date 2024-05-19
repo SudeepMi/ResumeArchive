@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
-import { getFirestore, doc, setDoc, getDocs, collection } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDocs, collection, onSnapshot } from "firebase/firestore";
 
 
 import { getAnalytics } from "firebase/analytics";
@@ -22,7 +22,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
-const db = getFirestore(app);
+export const db = getFirestore(app);
 
 export async function firebaseUpload(file, name) {
     const storageRef = ref(storage, name);
@@ -41,6 +41,8 @@ export async function getCvs(){
    querySnapshot.forEach(doc=>doc.exists() && data.push(doc.data()))
    return data;
 }
+
+
 
 export async function addViews(key){
 
