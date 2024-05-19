@@ -70,6 +70,7 @@ const FileUpload = () => {
         })
     }
     const handleSave = async ()  => {
+        setLoading(true);
         const results = await firebaseUpload(file,result.name.replace(" ","-").toLowerCase()+"-"+file.name)
         const  cvFile = "https://firebasestorage.googleapis.com/v0/b/"+results.metadata.bucket+"/o/"+results.metadata.fullPath+"?alt=media"
         const data = {
@@ -173,7 +174,7 @@ const FileUpload = () => {
                         </div>}
 
                         {(result.name) && <div>
-                            <button className='px-4 py-2 text-center rounded w-[100%] border'  onClick={()=>handleSave()}>Upload on ResumeArchive</button>
+                            <button className='px-4 py-2 text-center rounded w-[100%] border my-3 bg-slate-800 text-white' disabled={loading}  onClick={()=>handleSave()}>{loading ? "uploading...." : "Upload on ResumeArchive"}</button>
                             <button onClick={() => { setUploadedFile(null), setLoading(false), setErrors([]) }} className='px-4 py-2 text-center rounded w-[100%] border'>Upload Again</button>
                         </div>
                         }
