@@ -44,9 +44,11 @@ export async function getCvs() {
 
 
 
-export async function addViews(key) {
-
+export async function addViews(key, views) {
+  const data_ = await setDoc(doc(db, "views", key), views)
+  return data_;
 }
+
 
 export async function getPopularTags() {
   const querySnapshot = await getDocs(collection(db, "resumes"));

@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header, { poppins } from "@/components/Header/page"
+import GoogleAdsense from "@/components/GoogleAdsense";
 
 
 export const metadata = {
@@ -12,6 +13,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={poppins.className}>
+        <GoogleAdsense pId={"3022243059632861"} />
       <Header />
         {children}</body>
     </html>
